@@ -6,6 +6,9 @@ from the United State's Security and Exchange Commission (SEC) EDGAR
 database, and generates buy/sell/hold recommendations based on those
 reports.
 
+For now, this is an Eclipse/STS project. Delete all .project files
+in other branches for your convenience.
+
 Project structure:
 10qcruncher is a maven project.
 
