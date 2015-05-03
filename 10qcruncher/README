@@ -1,0 +1,29 @@
+John Hancock
+2014-05-02
+
+10qcruncher is software that downloads current 10-q quarterly reports
+from the United State's Security and Exchange Commission (SEC) EDGAR
+database, and generates buy/sell/hold recommendations based on those
+reports.
+
+Project structure:
+10qcruncher is a maven project.
+
+10qcruncher is composed of core and API components, 10qcruncher-core,
+and 10qcruncher-api, respectively.
+
+One may build the components separately; however we give only the
+directions for building the project in its entirety.
+
+The 10qcruncher-core module has a dependency on the 10q-cruncher-api
+module. 10q-cruncher api contains auto-generated code.
+
+In order to do development in 10qcruncher-core, one must run
+mvn install
+in the 10qcruncher-api directory to locally install the API library
+in his or her local repository.
+
+Building:
+
+From this directory, type:
+mvn compile
