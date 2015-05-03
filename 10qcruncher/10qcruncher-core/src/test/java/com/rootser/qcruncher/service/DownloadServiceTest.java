@@ -1,8 +1,8 @@
 package com.rootser.qcruncher.service;
 
-import java.util.List;
+import static org.junit.Assert.*;
 
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,14 +12,17 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:XmlReaderConfig.xml" })
-public class FeedParserServiceTest extends TestCase {
-	
+
+public class DownloadServiceTest {
 	@Autowired
-	FeedParserService feedSvc;
+	private FeedParserService feedSvc;
+	@Autowired
+	private DownloaderService downloadSvc;
 	@Test
-	public void testGetNew10QUrls() {
+	public void testDownloadUrls() {
 		List<String> urls = feedSvc.getNew10QUrls("http://www.sec.gov/cgi-bin/browse-edgar?action=getcurrent&type=10-q&company=&dateb=&owner=include&start=0&count=40&output=atom");
-		assertTrue(urls.size() != 0);
+		downloadSvc.downloadUrls(urls, "/tmp");
+		assertTrue(true);
 	}
 
 }

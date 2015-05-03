@@ -1,6 +1,9 @@
 package com.rootser.qcruncher.service;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -9,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
+import com.rometools.rome.io.FeedException;
 import com.rometools.rome.io.SyndFeedInput;
 import com.rometools.rome.io.XmlReader;
 
@@ -16,38 +20,37 @@ import com.rometools.rome.io.XmlReader;
 public class FeedParserSvcImpl implements FeedParserService {
 
 	private static Logger logger = LoggerFactory.getLogger(FeedParserSvcImpl.class);
+
 	public List<String> getNew10QUrls(String urlStr) {
-		getFeed(urlStr);
-		return null;
+		List<String> urls = getFeed(urlStr);
+		return urls;
 	}
-	private void getFeed(String urlStr){
-		boolean ok = false;
-		try {
+
+	private List<String> getFeed(String urlStr){
+		List<String> result = new ArrayList<String>();
+		try{
 			URL feedUrl = new URL(urlStr);
 
 			SyndFeedInput input = new SyndFeedInput();
 			SyndFeed feed = input.build(new XmlReader(feedUrl));
 
 			List<SyndEntry> entries = feed.getEntries();
+
 			for(SyndEntry entry: entries){
+				logger.debug("Today's 10-q reports:");
 				logger.debug(entry.getTitle());
+				logger.debug(entry.getLink());
+				result.add(entry.getLink());
 			}
-			
-
-			ok = true;
+		} catch(MalformedURLException e){
+			logger.debug(e.getMessage());
+		} catch (IllegalArgumentException e) {
+			logger.debug(e.getMessage());
+		} catch (FeedException e) {
+			logger.debug(e.getMessage());
+		} catch (IOException e) {
+			logger.debug(e.getMessage());
 		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			logger.debug("ERROR: "+ex.getMessage());
-		}
-
-
-		if (!ok) {
-
-			logger.debug("FeedReader reads and prints any RSS/Atom feed type.");
-			logger.debug("The first parameter must be the URL of the feed to read.");
-
-		}
+		return result;
 	}
-
 }
