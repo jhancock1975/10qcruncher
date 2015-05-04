@@ -16,8 +16,6 @@ import org.springframework.util.CollectionUtils;
 @Component
 public class AppMsg<T> {
 	private T result;
-	boolean hasExceptions;
-	boolean hasMessages;
 	private List<Throwable> throwables;
 	private List<String> messages;
 
@@ -35,7 +33,7 @@ public class AppMsg<T> {
 	}
 	
 	private boolean has(Collection<?> coll){
-		return CollectionUtils.isEmpty(coll);
+		return ! CollectionUtils.isEmpty(coll);
 	}
 	public boolean hasThrowables(){
 		return has(throwables);
