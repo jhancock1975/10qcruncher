@@ -15,7 +15,29 @@ import org.springframework.util.CollectionUtils;
 import com.rootser.qcruncher.common.AppMsg;
 @Service
 public class DownloaderServiceImpl implements DownloaderService {
+	
 	private static Logger logger = LoggerFactory.getLogger(DownloaderServiceImpl.class);
+	
+	/**
+	 * common case for this method is that EDGAR
+	 * urls will refer to files where the file
+	 * name is the text after the last '/' in
+	 * the url
+	 * 
+	 * if we don't get a string with '/' in it
+	 * is probably a malformed URL. So we just
+	 * return the input unchanged.
+	 * 
+	 * @param urlStr
+	 * @return
+	 */
+	private String getFileNameFromUrl(String urlStr){
+		if (urlStr.contains("/")){
+			return urlStr.substring(urlStr.lastIndexOf('/'), urlStr.length()); 
+		} else {
+			return urlStr;
+		}
+	}
 
 	public List<AppMsg<String>> downloadUrls(List<AppMsg<String>> urlAppMsgs, String downloadsDir) {
 		File downloadDir = new File(downloadsDir);
@@ -31,12 +53,14 @@ public class DownloaderServiceImpl implements DownloaderService {
 						logger.debug("Downloading to: " + downloadDir.getAbsolutePath());
 
 						String urlStr = msg.getResult();
-						if (urlStr == null){
+						
+						if (urlStr == null){	
 							logger.debug("attempt to use null as URL");
+						
 						} else {
+							
 							String latestSecFileName = downloadDir +
-									urlStr.substring(urlStr.lastIndexOf('/'), urlStr.length()); 
-
+									getFileNameFromUrl(urlStr); 
 							FileUtils.copyURLToFile(new URL(urlStr),new File(latestSecFileName));
 						}
 

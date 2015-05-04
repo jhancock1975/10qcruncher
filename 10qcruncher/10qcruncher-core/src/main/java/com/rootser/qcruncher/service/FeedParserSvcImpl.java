@@ -36,7 +36,6 @@ public class FeedParserSvcImpl implements FeedParserService {
 	}
 	private List<AppMsg<String>> getFeed(String urlStr){
 
-		MalformedURLException malUrl;
 		String malUrlMsg;
 		URL feedUrl = null;
 		AppMsg<String> appMsg = new AppMsg<String>();
@@ -48,39 +47,40 @@ public class FeedParserSvcImpl implements FeedParserService {
 			appMsg = addMsgAndExc(e, malUrlMsg, appMsg);
 			logger.debug(e.getMessage());
 		}
-
-
+		
 		SyndFeedInput input = new SyndFeedInput();
-		SyndFeed feed = null;;
+		SyndFeed feed = null;
+		
+		if (! appMsg.hasThrowables() ){
+	
+			try {
+				feed = input.build(new XmlReader(feedUrl));
+			} catch (IllegalArgumentException e) {
 
-		try {
-			feed = input.build(new XmlReader(feedUrl));
-		} catch (IllegalArgumentException e) {
+				String feedIllArgMsg = "Unable to build XML reader possibly "+
+						"because of a problem with URL " + feedUrl;
+				appMsg = addMsgAndExc(e, feedIllArgMsg, appMsg);
+				logger.debug(e.getMessage());
 
-			String feedIllArgMsg = "Unable to build XML reader possibly "+
-					"because of a problem with URL " + feedUrl;
-			appMsg = addMsgAndExc(e, feedIllArgMsg, appMsg);
-			logger.debug(e.getMessage());
+			} catch (FeedException e) {
 
-		} catch (FeedException e) {
+				String feedExMsg = "Problem with feed when attempting " +
+						"to build XML reader for URL" + feedUrl;
+				appMsg = addMsgAndExc(e, feedExMsg, appMsg);
+				logger.debug(e.getMessage());
 
-			String feedExMsg = "Problem with feed when attempting " +
-					"to build XML reader for URL" + feedUrl;
-			appMsg = addMsgAndExc(e, feedExMsg, appMsg);
-			logger.debug(e.getMessage());
+			} catch (IOException e) {
 
-		} catch (IOException e) {
-
-			String ioExMsg = "Input or output error " +
-					" when attempting " +
-					"to build XML reader for URL" + feedUrl;
-			appMsg = addMsgAndExc(e, ioExMsg, appMsg);
-			logger.debug(e.getMessage());
+				String ioExMsg = "Input or output error " +
+						" when attempting " +
+						"to build XML reader for URL" + feedUrl;
+				appMsg = addMsgAndExc(e, ioExMsg, appMsg);
+				logger.debug(e.getMessage());
+			}
 		}
-
 		List<AppMsg<String>> appMsgs = new ArrayList<AppMsg<String>>();
 
-		if (appMsg.hasMessages() || appMsg.hasThrowables()){
+		if (appMsg.hasThrowables()){
 			appMsgs.add(appMsg);
 			return appMsgs;
 		} else {
