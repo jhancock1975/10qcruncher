@@ -15,8 +15,8 @@ import com.rootser.qcruncher.common.AppMsg;
  *
  */
 public interface ParentDocParserService {
-	public List<AppMsg<String>> parseAndDownload10QHtm(List<AppMsg<String>> parentDocList, String downloadDirName);
-	public AppMsg<String> parseAndDownload10QHtm(AppMsg<String> parentDoc, String downloadDirName);
-	public List<AppMsg<String>> parseAndDownload10QTxt(List<AppMsg<String>> parentDocList, String downloadDirName);
-	public AppMsg<String> parseAndDownload10QTxt(AppMsg<String> parentDoc, String downloadDirName);
+	public List<AppMsg<String>> get10QHtmUrl(List<AppMsg<String>> parentDocList, String downloadDirName);
+	public AppMsg<String> get10QHtmUrl(AppMsg<String> parentDoc, String downloadDirName);
+	public List<AppMsg<String>> get10QTxtUrl(List<AppMsg<String>> parentDocList, String downloadDirName);
+	public AppMsg<String> get10QTxtUrl(AppMsg<String> parentDoc, String downloadDirName);
 }
