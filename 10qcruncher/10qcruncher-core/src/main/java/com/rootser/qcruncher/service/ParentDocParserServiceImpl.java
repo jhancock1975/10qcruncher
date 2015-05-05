@@ -9,24 +9,31 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import com.rootser.qcruncher.common.AppMsg;
 @Service
+@Configuration
+@PropertySource("classpath:parent-parser.properties")
 public class ParentDocParserServiceImpl implements ParentDocParserService {
 
 	Logger logger = LoggerFactory.getLogger(ParentDocParserServiceImpl.class);
 
-	enum DocType{
-		html, txt;
-	}
-
+	@Value("${10.q.html.selector}")
+	private String htmlSelector;
+	
+	@Value("${10.q.txt.selector}")
+	private String txtSelector;
+	
 	public List<AppMsg<String>> get10QHtmUrl(List<AppMsg<String>> parentDocList) {
-		return get10QUrlList(parentDocList, "a[href~=.*10q.*htm]");
+		return get10QUrlList(parentDocList, htmlSelector);
 	}
 	
 	public List<AppMsg<String>> get10QTxtUrl(List<AppMsg<String>> parentDocList) {
-		return get10QUrlList(parentDocList, "a[href~=.*txt]");
+		return get10QUrlList(parentDocList, txtSelector);
 	}
 	
 	private List<AppMsg<String>> get10QUrlList(List<AppMsg<String>> parentDocList, String selectorString) {
@@ -39,11 +46,11 @@ public class ParentDocParserServiceImpl implements ParentDocParserService {
 	
 	public AppMsg<String> get10QHtmUrl(AppMsg<String> parentDoc) {
 
-		return get10QUrl(parentDoc, "a[href~=.*10q.*htm]");
+		return get10QUrl(parentDoc, htmlSelector);
 	}
 
 	public AppMsg<String> get10QTxtUrl(AppMsg<String> parentDoc) {
-		return get10QUrl(parentDoc, "a[href~=.*txt]");
+		return get10QUrl(parentDoc, txtSelector);
 	}
 
 	private AppMsg<String> get10QUrl(AppMsg<String> parentDoc, String selectorString){
@@ -69,7 +76,7 @@ public class ParentDocParserServiceImpl implements ParentDocParserService {
 
 					Document doc = Jsoup.connect(parentDocUrlStr).get();
 					Element tenQUrl= doc.select(selectorString).first();
-					String tenQUrlStr = tenQUrl.baseUri(); 
+					String tenQUrlStr = tenQUrl.attributes().get("href"); 
 					logger.debug(tenQUrlStr);
 					appMsg.setResult(tenQUrlStr);
 
