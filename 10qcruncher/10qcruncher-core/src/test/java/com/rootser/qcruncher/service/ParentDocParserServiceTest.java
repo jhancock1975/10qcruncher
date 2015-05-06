@@ -41,6 +41,7 @@ public class ParentDocParserServiceTest {
 
 	@Test
 	public void testGet10QHtmUrlList() {
+		
 		AppMsg<String> appMsg = getUrlMsg(tenQParentUrl);
 
 		@SuppressWarnings("unchecked")

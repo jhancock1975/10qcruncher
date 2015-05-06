@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -27,6 +28,9 @@ public class ParentDocParserServiceImpl implements ParentDocParserService {
 	
 	@Value("${10.q.txt.selector}")
 	private String txtSelector;
+	
+	@Autowired
+	private DocRetrievalSvc docSvc;
 	
 	public List<AppMsg<String>> get10QHtmUrl(List<AppMsg<String>> parentDocList) {
 		return get10QUrlList(parentDocList, htmlSelector);
@@ -54,6 +58,7 @@ public class ParentDocParserServiceImpl implements ParentDocParserService {
 	}
 
 	private AppMsg<String> get10QUrl(AppMsg<String> parentDoc, String selectorString){
+		
 		AppMsg<String> appMsg = new AppMsg<String>();
 
 		if (parentDoc == null){
@@ -72,32 +77,23 @@ public class ParentDocParserServiceImpl implements ParentDocParserService {
 
 			} else {
 
-				try {
-
-					Document doc = Jsoup.connect(parentDocUrlStr).get();
-					Element tenQUrl= doc.select(selectorString).first();
-					String tenQUrlStr = tenQUrl.attributes().get("href"); 
-					logger.debug(tenQUrlStr);
-					appMsg.setResult(tenQUrlStr);
-
-				} catch (IOException e) {
-
-					commonCatchLogic(appMsg, e);
-					appMsg.addMsg("10qcruncher is unable to get parent document at " + parentDocUrlStr);
-
-				} catch(IllegalArgumentException e){
-
-					commonCatchLogic(appMsg, e);
-					appMsg.addMsg("10qcruncher thinks that " + parentDocUrlStr +
-							" is not a valid URL.");
-				}
+					AppMsg<Document> docMsg =  docSvc.getHtmlDoc(parentDoc);
+					if (! docMsg.hasErrors()){
+						Document doc = docMsg.getResult();
+						Element tenQUrl= doc.select(selectorString).first();
+						String tenQUrlStr = tenQUrl.attributes().get("href"); 
+						logger.debug(tenQUrlStr);
+						appMsg.setResult(tenQUrlStr);
+					} else {
+						appMsg.addMsg("10qcruncher encountered a problem when "
+								+ "it was trying to download the 10-Q parent document.");
+						appMsg.addMsg(docMsg.getMsgs());
+						appMsg.addThrowables(docMsg.getThrowables());
+					}
 			}
 		}
 		return appMsg;
 	}
 
-	private void commonCatchLogic(AppMsg<String> appMsg , Exception e){
-		logger.debug(e.getMessage());
-		appMsg.addThrowables(e);
-	}
+	
 }

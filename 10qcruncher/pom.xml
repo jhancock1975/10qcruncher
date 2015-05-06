@@ -13,5 +13,6 @@
 	<modules>
 		<module>10qcruncher-api</module>
 		<module>10qcruncher-core</module>
+		<module>10qcruncher-web</module>
     </modules>
 </project>
