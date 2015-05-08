@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<title th:text="#{view.index.title}">Welcome!</title>
+<title th:text="#{view.index.title}">Crunch Results</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <link href="../../../resources/css/bootstrap.min.css" rel="stylesheet"
 	media="screen" th:href="@{/resources/css/bootstrap.min.css}" />
@@ -12,7 +12,8 @@
 	th:src="@{/resources/js/bootstrap.min.js}"></script>
 </head>
 <body>
-	<div th:replace="fragments/header :: header">&nbsp;</div>
+<body>
+<div th:replace="fragments/header :: header">&nbsp;</div>
 	<div class="container">
 		<!-- /* Handle the flash message */-->
 		<th:block th:if="${message != null}">
@@ -20,14 +21,7 @@
 			<div
 				th:replace="fragments/alert :: alert (type=${#strings.toLowerCase(message.type)}, message=#{${message.message}(${#authentication.name})})">&nbsp;</div>
 		</th:block>
-		<p>Welcome to the Spring MVC Quickstart application!</p>
+		<p>Crunch Results</p>
 	</div>
-	<form class="form-narrow form-horizontal" method="post" th:action="@{/crunch}" th:object="${crunchForm}">
-	<div class="form-group">
-		<div class="col-lg-offset-2 col-lg-10">
-			<button type="submit" class="btn btn-default">Crunch Latest 10-Q's</button>
-		</div>
-	</div>
-	</form>
 </body>
 </html>
