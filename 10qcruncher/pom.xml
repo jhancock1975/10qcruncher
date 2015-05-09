@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.rootser</groupId>
-	<artifactId>qcruncher</artifactId>
+	<artifactId>10qcruncher</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
@@ -13,8 +13,6 @@
 	<modules>
 		<module>10qcruncher-api</module>
 		<module>10qcruncher-core</module>
-		<module>qcruncher-web</module>
-		<module>qcruncher-ml</module>
-		<module>qcruncher-int</module>
+		<module>10qcruncher-web</module>
     </modules>
 </project>
