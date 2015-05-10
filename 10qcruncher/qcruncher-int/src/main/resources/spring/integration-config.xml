@@ -9,4 +9,10 @@
 	
 	<!-- To resolve ${} in @Value --> 
 	<bean name="PropConfig" class="org.springframework.context.support.PropertySourcesPlaceholderConfigurer"/>
+	
+	<bean name="TenQKeywords" class="java.util.ArrayList">
+		<constructor-arg>
+			<value>#{{"Accounts receivable, net"}}</value>
+		</constructor-arg>
+	</bean>
 </beans>
