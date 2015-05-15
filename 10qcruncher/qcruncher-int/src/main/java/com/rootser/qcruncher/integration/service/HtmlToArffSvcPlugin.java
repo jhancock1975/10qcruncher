@@ -1,9 +1,10 @@
 package com.rootser.qcruncher.integration.service;
 
-import java.util.HashMap;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -14,11 +15,11 @@ import com.rootser.qcruncher.common.AppMsg;
 import com.rootser.qcruncher.integration.common.ArffData;
 import com.rootser.qcruncher.plugin.Plugin;
 
-public class HtmlToArffSvcPlugin implements Plugin<ArffData, Document>{
+public class HtmlToArffSvcPlugin implements Plugin<Document, ArffData>{
 	
 	private Logger logger = LoggerFactory.getLogger(HtmlToArffSvcPlugin.class);
 	
-	public ArffData process(Document tenQReport) {
+	public AppMsg<ArffData> process(AppMsg<Document> tenQReport) {
 
 		Pattern numberPattern = Pattern.compile("[\\d,]+");
 		Matcher numberMatcher;
@@ -28,9 +29,9 @@ public class HtmlToArffSvcPlugin implements Plugin<ArffData, Document>{
 		
 		for (String keyword: TenQKeywords.keywords){
 			
-			HashMap<String, Double> curArffLine = new HashMap<String, Double>();
+			ArffData curArffLine = new ArffData();
 
-			Element dataPointLabel = tenQReport.select(keyword).first();
+			Element dataPointLabel = tenQReport.getResult().select(keyword).first();
 
 			if (dataPointLabel != null){
 
@@ -59,7 +60,7 @@ public class HtmlToArffSvcPlugin implements Plugin<ArffData, Document>{
 								break;
 							}
 							if (numberMatchCount > 1){
-								curArffLine.put(dataPointLabel.text(), firstNumber - secondNumber);
+								curArffLine.put(new ImmutablePair<String, Date>(dataPointLabel.text(),null), firstNumber - secondNumber);
 								break;
 							}
 						} catch(NumberFormatException e){
@@ -67,12 +68,11 @@ public class HtmlToArffSvcPlugin implements Plugin<ArffData, Document>{
 						}
 					}
 				}
-				arffDataMsg.getResult().add(curArffLine);
 			}
-
+			arffDataMsg.setResult(curArffLine);
 		}
 		logger.debug(arffDataMsg.getResult().toString());
-		return arffDataMsg.getResult();
+		return arffDataMsg;
 	}
 
 }
