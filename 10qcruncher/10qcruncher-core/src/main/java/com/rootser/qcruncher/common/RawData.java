@@ -7,22 +7,31 @@
  */
 package com.rootser.qcruncher.common;
 
+import java.util.List;
+
 import org.jsoup.nodes.Document;
 
 public class RawData {
-	String txtData;
-	Document htmlData;
-	public String getTxtData() {
-		return txtData;
-	}
-	public void setTxtData(String txtData) {
+	List<AppMsg<String>> txtData;
+	List<AppMsg<Document>> htmlData;
+	
+	public RawData(List<AppMsg<String>> txtData, List<AppMsg<Document>> htmlData) {
+		super();
 		this.txtData = txtData;
-	}
-	public Document getHtmlData() {
-		return htmlData;
-	}
-	public void setHtmlData(Document htmlData) {
 		this.htmlData = htmlData;
 	}
+	public List<AppMsg<String>> getTxtData() {
+		return txtData;
+	}
+	public void setTxtData(List<AppMsg<String>> txtData) {
+		this.txtData = txtData;
+	}
+	public List<AppMsg<Document>> getHtmlData() {
+		return htmlData;
+	}
+	public void setHtmlData(List<AppMsg<Document>> htmlData) {
+		this.htmlData = htmlData;
+	}
+	
 	
 }

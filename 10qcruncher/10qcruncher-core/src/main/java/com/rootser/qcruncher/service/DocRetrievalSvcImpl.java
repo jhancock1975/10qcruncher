@@ -13,19 +13,19 @@ import com.rootser.qcruncher.plugin.TextUrlDownloadPlugin;
 public class DocRetrievalSvcImpl implements DocRetrievalSvc {
 
 	public AppMsg<String> getTxtDoc(AppMsg<String> urlMsg) {
-		return new DownloadDelegate<String>().getDoc(urlMsg, new TextUrlDownloadPlugin());
+		return new ProcessDelegate<String, String>().applyPluginProcess(urlMsg, new TextUrlDownloadPlugin());
 	}
 
 	public List<AppMsg<String>> getTxtDocs(List<AppMsg<String>> urlMsgs) {
-		return new DownloadDelegate<String>().getDocs(urlMsgs, new TextUrlDownloadPlugin());
+		return new ProcessDelegate<String, String>().applyPluginProcessList(urlMsgs, new TextUrlDownloadPlugin());
 	}
 
 	public AppMsg<Document> getHtmlDoc(AppMsg<String> urlMsg) {
-		return new DownloadDelegate<Document>().getDoc(urlMsg, new HtmlDownloadPlugin());
+		return new ProcessDelegate<Document, String>().applyPluginProcess(urlMsg, new HtmlDownloadPlugin());
 	}
 
 	public List<AppMsg<Document>> getHtmlDocs(List<AppMsg<String>> urlMsgs) {
-		return new DownloadDelegate<Document>().getDocs(urlMsgs, new HtmlDownloadPlugin());
+		return new ProcessDelegate<Document, String>().applyPluginProcessList(urlMsgs, new HtmlDownloadPlugin());
 	}
 
 	 

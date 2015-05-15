@@ -1,15 +1,27 @@
 package com.rootser.qcruncher.plugin;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class HtmlDownloadPlugin implements DownloadPlugin<Document>{
+import com.rootser.qcruncher.common.AppMsg;
+import com.rootser.qcruncher.common.CommonCatchLogic;
 
-	public Document download(String urlStr) throws MalformedURLException, IOException {
-		return Jsoup.connect(urlStr).get();
+public class HtmlDownloadPlugin implements Plugin<String, Document>{
+	
+	Logger logger =  LoggerFactory.getLogger(HtmlDownloadPlugin.class);
+
+	@SuppressWarnings("unchecked")
+	public AppMsg<Document> process(AppMsg<String> urlStr) {
+		try {
+			return new AppMsg<Document>(Jsoup.connect(urlStr.getResult()).get());
+		} catch (IOException e) {
+			return (AppMsg<Document>) CommonCatchLogic.commonCatchLogic(logger, new AppMsg<Document>(), e, 
+					"10Q cruncher encountered an input/output exception when trying to download an HTML document.");
+		}
 	}
 	
 

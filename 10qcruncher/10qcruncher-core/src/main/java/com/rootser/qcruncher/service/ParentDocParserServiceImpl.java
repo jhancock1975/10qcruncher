@@ -1,10 +1,8 @@
 package com.rootser.qcruncher.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
@@ -16,6 +14,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import com.rootser.qcruncher.common.AppMsg;
+import com.rootser.qcruncher.plugin.XrblUrlPlugin;
 @Service
 @Configuration
 @PropertySource("classpath:parent-parser.properties")
@@ -25,17 +24,23 @@ public class ParentDocParserServiceImpl implements ParentDocParserService {
 
 	@Value("${10.q.html.selector}")
 	private String htmlSelector;
-	
+
 	@Value("${10.q.txt.selector}")
 	private String txtSelector;
-	
+		
+	@Value("${sec.url.prefix}")
+	private String secUrlPrefix;
+
 	@Autowired
 	private DocRetrievalSvc docSvc;
 	
+	@Autowired
+	private XrblUrlPlugin xrblPlugin;
+
 	public List<AppMsg<String>> get10QHtmUrl(List<AppMsg<String>> parentDocList) {
 		return get10QUrlList(parentDocList, htmlSelector);
 	}
-	
+
 	public List<AppMsg<String>> get10QTxtUrl(List<AppMsg<String>> parentDocList) {
 		return get10QUrlList(parentDocList, txtSelector);
 	}
@@ -47,7 +52,7 @@ public class ParentDocParserServiceImpl implements ParentDocParserService {
 		}
 		return appMsgs;
 	}
-	
+
 	public AppMsg<String> get10QHtmUrl(AppMsg<String> parentDoc) {
 
 		return get10QUrl(parentDoc, htmlSelector);
@@ -58,7 +63,7 @@ public class ParentDocParserServiceImpl implements ParentDocParserService {
 	}
 
 	private AppMsg<String> get10QUrl(AppMsg<String> parentDoc, String selectorString){
-		
+
 		AppMsg<String> appMsg = new AppMsg<String>();
 
 		if (parentDoc == null){
@@ -69,7 +74,6 @@ public class ParentDocParserServiceImpl implements ParentDocParserService {
 
 			String parentDocUrlStr = parentDoc.getResult();
 
-
 			if (parentDocUrlStr == null){
 
 				logger.debug("ParentDoc has null url string.");
@@ -77,23 +81,52 @@ public class ParentDocParserServiceImpl implements ParentDocParserService {
 
 			} else {
 
-					AppMsg<Document> docMsg =  docSvc.getHtmlDoc(parentDoc);
-					if (! docMsg.hasErrors()){
-						Document doc = docMsg.getResult();
-						Element tenQUrl= doc.select(selectorString).first();
+				AppMsg<Document> docMsg =  docSvc.getHtmlDoc(parentDoc);
+				if (! docMsg.hasErrors()){
+					Document doc = docMsg.getResult();
+					Element tenQUrl= doc.select(selectorString).first();
+
+					if (tenQUrl == null){
+						appMsg = badUrlLogic(appMsg, docMsg, "tenQUrl", selectorString);
+						
+					} else 	if (tenQUrl.attributes() == null){
+						appMsg = badUrlLogic(appMsg, docMsg, "tenQUrl.attributes()", selectorString);
+					} else {
+
 						String tenQUrlStr = tenQUrl.attributes().get("href"); 
 						logger.debug(tenQUrlStr);
-						appMsg.setResult(tenQUrlStr);
-					} else {
-						appMsg.addMsg("10qcruncher encountered a problem when "
-								+ "it was trying to download the 10-Q parent document.");
-						appMsg.addMsg(docMsg.getMsgs());
-						appMsg.addThrowables(docMsg.getThrowables());
+						appMsg.setResult(secUrlPrefix + tenQUrlStr);
 					}
+				} else {
+					appMsg = setDownloadErrorMsg(appMsg, docMsg);
+				}
 			}
 		}
 		return appMsg;
 	}
 
+	private AppMsg<String> setDownloadErrorMsg(AppMsg<String> appMsg, AppMsg<Document> docMsg){
+		appMsg.addMsg("10qcruncher encountered a problem when "
+				+ "it was trying to download the 10-Q parent document.");
+		appMsg.addMsg(docMsg.getMsgs());
+		appMsg.addThrowables(docMsg.getThrowables());
+		appMsg.setHasErrors(true);
+		return appMsg;
+	}
 	
+	private AppMsg<String> badUrlLogic(AppMsg<String> appMsg, AppMsg<Document> docMsg, String urlEltName, String selectorString){
+		logger.debug(urlEltName + " is null");
+		logger.debug("selector string " + selectorString);
+		appMsg = setDownloadErrorMsg(appMsg, docMsg);
+		return appMsg;
+	}
+
+	public List<AppMsg<String>> get10QXrblUrl(List<AppMsg<String>> parentDocList) {
+		return new ProcessDelegate<String,String>().applyPluginProcessList(parentDocList, xrblPlugin);
+	}
+
+	public AppMsg<String> get10QXrblUrl(AppMsg<String> parentDoc) {
+		return new ProcessDelegate<String,String>().applyPluginProcess(parentDoc, xrblPlugin);
+	}
+
 }

@@ -1,13 +1,19 @@
+/**
+ * This class should be used in conjunction
+ * with ProcessDelegate;
+ * 
+ * 
+ */
 package com.rootser.qcruncher.plugin;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
+import com.rootser.qcruncher.common.AppMsg;
+
 
 /**
  * @author john
  *
  * @param <T>
  */
-public interface DownloadPlugin<T> {
-	public T download(String urlStr) throws MalformedURLException, IOException;
+public interface Plugin<S, T>{
+	public AppMsg<T> process(AppMsg<S> inputParam) ;
 }
