@@ -110,5 +110,45 @@ public class ParentDocParserServiceTest {
 
 		assertTrue(passCond);
 	}
+	
+	@Test
+	public void testGet10QXrblUrl(){
+		AppMsg<String> appMsgUrl = getUrlMsg(tenQParentUrl);
+		
+		AppMsg<String> result = parseSvc.get10QXrblUrl(appMsgUrl);
+		
+		boolean passCond = !(result.hasMessages() && result.hasThrowables())
+				&& result.getResult().endsWith(".xml");
+
+		assertTrue(passCond);
+	}
+	
+	@Test
+	public void testGet10QXrblUrlList() {
+		AppMsg<String> appMsg = getUrlMsg(tenQParentUrl);
+
+		@SuppressWarnings("unchecked")
+		List<AppMsg<String>> parentUrls = Lists.newArrayList(appMsg, appMsg, appMsg);
+
+		List<AppMsg<String>> appMsgs = parseSvc.get10QXrblUrl(parentUrls);
+
+		for(int i = 0; i < appMsgs.size(); i++){
+			AppMsg<String> result = appMsgs.get(i);
+			boolean passCond = ! (result.hasMessages() && result.hasThrowables()) && 
+					result.getResult().endsWith(".xml");
+			assertTrue("unable to parse 10q txt url from good parent doc url on " 
+					+ i + "th iteration", passCond );
+		}
+	}
+	
+	@Test
+	public void testGet10Q_Bad_XrblUrl() {
+		
+		AppMsg<String> appMsg = getUrlMsg("rubbish");
+
+		AppMsg<String> result = parseSvc.get10QXrblUrl(appMsg);
+
+		assertTrue(result.hasMessages() && result.hasThrowables());
+	}
 
 }

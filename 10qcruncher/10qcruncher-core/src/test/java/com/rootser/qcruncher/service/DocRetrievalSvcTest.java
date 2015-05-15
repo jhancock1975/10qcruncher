@@ -1,17 +1,22 @@
 package com.rootser.qcruncher.service;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.List;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.select.Elements;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -24,6 +29,8 @@ import com.rootser.qcruncher.common.AppMsg;
 @PropertySource("classpath:service-tests.properties")
 public class DocRetrievalSvcTest {
 
+	private static Logger logger = LoggerFactory.getLogger(DocRetrievalSvcTest.class);
+
 	@Autowired
 	private DocRetrievalSvc docSvc;
 
@@ -32,6 +39,9 @@ public class DocRetrievalSvcTest {
 
 	@Value("${doc.retrieval.test.txt.url}")
 	private String testTxtUrlStr;
+
+	@Autowired
+	private Environment env;
 
 	private AppMsg<String> getUrlMsg(){
 		AppMsg<String> urlMsg = new AppMsg<String>();
@@ -49,6 +59,35 @@ public class DocRetrievalSvcTest {
 				docMsg.getResult().title() != null;
 
 		assertTrue(passCond);
+	}
+
+
+	@Test
+	public void testSelector() {
+		String niceFormat10Q = env.getProperty("doc.retrieval.nice.regular.10.q.url");
+		String nasty10Q = env.getProperty("doc.retrieval.nasty.unformatted.10.q.url");
+		
+		List<String> urlList = Lists.newArrayList(niceFormat10Q, nasty10Q);
+		
+		AppMsg<String> urlMsg = new AppMsg<String>();
+		
+		for (String urlStr: urlList){
+			
+			urlMsg.setResult(urlStr);
+
+			AppMsg<Document> docMsg = docSvc.getHtmlDoc(urlMsg);
+
+			boolean passCond = ! docMsg.hasErrors() &&
+					docMsg.getResult().title() != null;
+
+			Element arNetLabel = docMsg.getResult().select("td:contains(Accounts receivable, net)").first();
+			Elements arNetSibs = arNetLabel.siblingElements();
+			for (Element sib: arNetSibs){
+				logger.debug("'" + sib.text().trim() + "'");
+			}
+			assertTrue(passCond);
+		}
+		
 	}
 
 	@Test
@@ -108,12 +147,12 @@ public class DocRetrievalSvcTest {
 	@Test
 	public void testBadHtmlURl(){
 		AppMsg<String> urlMsg = getRubbishUrlMsg();
-		
+
 		AppMsg<Document> docMsg = docSvc.getHtmlDoc(urlMsg);
 
 		assertTrue(docMsg.hasErrors());
 	}
-	
+
 	@Test
 	public void testBadHtmlUrls(){
 		@SuppressWarnings("unchecked")
