@@ -1,5 +1,8 @@
 package com.rootser.qcruncher.mlsvc;
 
-public class DocLearnerSvcImpl {
+import org.springframework.stereotype.Service;
 
+@Service
+public class DocLearnerSvcImpl {
+	
 }
