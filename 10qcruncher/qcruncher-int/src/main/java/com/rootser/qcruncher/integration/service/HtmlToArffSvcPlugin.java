@@ -60,7 +60,7 @@ public class HtmlToArffSvcPlugin implements Plugin<Document, ArffData>{
 								break;
 							}
 							if (numberMatchCount > 1){
-								curArffLine.put(new ImmutablePair<String, Date>(dataPointLabel.text(),null), firstNumber - secondNumber);
+								//curArffLine.put(new ImmutablePair<String, Date>(dataPointLabel.text(),null), firstNumber - secondNumber);
 								break;
 							}
 						} catch(NumberFormatException e){
