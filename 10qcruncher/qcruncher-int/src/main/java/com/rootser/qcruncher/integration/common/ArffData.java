@@ -14,8 +14,6 @@ public class ArffData {
 		numericData = new HashMap<String, ArrayList<Pair<String, Double>>>();
 	}
 
-	private static final long serialVersionUID = 1L;
-
 	private  String cik;
 
 	private Date startDate;

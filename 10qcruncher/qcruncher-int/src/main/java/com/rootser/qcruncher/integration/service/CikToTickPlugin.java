@@ -10,6 +10,8 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Component;
 
 import com.google.gson.Gson;
 import com.rootser.qcruncher.common.AppMsg;
@@ -17,6 +19,8 @@ import com.rootser.qcruncher.common.CommonCatchLogic;
 import com.rootser.qcruncher.plugin.Plugin;
 import com.rootser.qcruncher.service.DocRetrievalSvc;
 
+@Component
+@Qualifier("CikToTickPlugin")
 public class CikToTickPlugin implements Plugin<String, String> {
 	
 	Logger logger = LoggerFactory.getLogger(CikToTickPlugin.class);
@@ -36,7 +40,8 @@ public class CikToTickPlugin implements Plugin<String, String> {
 	}
 	@Autowired
 	private DocRetrievalSvc docSvc;
-	@Override
+
+	
 	public AppMsg<String> process(AppMsg<String> cikAppMsg) {
 		String cik = cikAppMsg.getResult();
 		AppMsg<String> tickerMsg = new AppMsg<String>();
@@ -71,4 +76,5 @@ public class CikToTickPlugin implements Plugin<String, String> {
 		}
 		return tickerMsg;
 	}
+	
 }

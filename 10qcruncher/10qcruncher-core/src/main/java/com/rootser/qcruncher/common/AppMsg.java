@@ -86,4 +86,9 @@ public class AppMsg<T> {
 		this.hasErrors = hasErrors;
 	}
 	
+	public void copyMsgErrThrows(AppMsg<?> src){
+		this.setHasErrors(src.hasErrors);
+		this.addMsg(src.getMsgs());
+		this.addThrowables(src.getThrowables());
+	}
 }

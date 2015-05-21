@@ -10,7 +10,7 @@ import com.rootser.qcruncher.service.ProcessDelegate;
 @Service
 public class AvgSp500SvcImpl implements AvgSp500Svc {
 
-	@Override
+	
 	public AppMsg<Double> getAvgSp500(AppMsg<Pair<Date, Date>> startEndDates) {
 		return new ProcessDelegate<Double, Pair<Date, Date>>().applyPluginProcess(startEndDates, new AvgSp500Plugin());
 	}

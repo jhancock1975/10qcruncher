@@ -26,7 +26,7 @@ public class AvgSp500Plugin implements Plugin<Pair<Date, Date>, Double> {
 		cal.setTime(date);
 		return cal;
 	}
-	@Override
+	
 	public AppMsg<Double> process(AppMsg<Pair<Date, Date>> inputParam) {
 
 		AppMsg<Double> avgMsg = new AppMsg<Double>();
