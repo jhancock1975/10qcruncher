@@ -12,4 +12,6 @@ public interface XrblToArffSvc {
 	
 	public AppMsg<ArffData> convertXrbl(AppMsg<String> xmlDocUrl);
 	
+	public AppMsg<String> toArffFormat(AppMsg<ArffDataSet> arffDataList);
+	
 }

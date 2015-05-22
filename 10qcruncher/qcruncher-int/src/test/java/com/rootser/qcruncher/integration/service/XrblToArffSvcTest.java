@@ -67,7 +67,7 @@ public class XrblToArffSvcTest {
 			logger.debug("--------------------");
 		}
 		
-		//logger.debug(xrblToArffSvc.toArffFormat(arffDataList.getResult().toString()));
+		logger.debug(xrblToArffSvc.toArffFormat(arffDataList).getResult());
 		
 		assertTrue(passCond);
 
