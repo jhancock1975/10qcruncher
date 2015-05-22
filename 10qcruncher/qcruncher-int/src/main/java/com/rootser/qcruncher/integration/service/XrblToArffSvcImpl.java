@@ -19,10 +19,17 @@ import com.rootser.qcruncher.service.ProcessDelegate;
 public class XrblToArffSvcImpl implements XrblToArffSvc {
 
 
-	public List<AppMsg<ArffData>> convertXrbls(List<AppMsg<String>> xmlDocUrls) {
+	public AppMsg<ArffDataSet> convertXrbls(List<AppMsg<String>> xmlDocUrls) {
 		Plugin<String, ArffData>  xrblPlugin = new XrblToArffPlugin();
 		ProcessDelegate<ArffData, String> delegate = new ProcessDelegate<ArffData, String>();
-		return delegate.applyPluginProcessList(xmlDocUrls, xrblPlugin);
+		List<AppMsg<ArffData>> arffDataMsgs = delegate.applyPluginProcessList(xmlDocUrls, xrblPlugin);
+		
+		AppMsg<ArffDataSet> dataSetMsg = new AppMsg<ArffDataSet>();
+		for (AppMsg<ArffData> arffDataMsg: arffDataMsgs){
+			dataSetMsg.copyMsgErrThrows(arffDataMsg);
+		}
+		
+		return dataSetMsg;
 	}
 
 	public AppMsg<ArffData> convertXrbl(AppMsg<String> xmlDocUrl) {

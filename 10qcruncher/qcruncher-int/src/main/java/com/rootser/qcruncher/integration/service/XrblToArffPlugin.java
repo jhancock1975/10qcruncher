@@ -60,7 +60,7 @@ public class XrblToArffPlugin implements Plugin<String, ArffData> {
 	}
 
 	private SimpleDateFormat startEndDateFmt = new SimpleDateFormat("yyyy-MM-dd");
-
+ 
 
 	public void visitRecursively(Node node, AppMsg<ArffData> result) {
 
