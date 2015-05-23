@@ -15,13 +15,16 @@ public class XrblUrlPlugin implements Plugin<String, String> {
 
 	@Value("${10.q.xrbl.selector}")
 	private String xrblSelector;
-	
-	@Value("${10.q.xrbl.td.str}")
-	private String xrblTdStr;
-	
+
+	@Value("${10.q.xrbl.td.doc.str}")
+	private String xrblTdDocStr;
+
+	@Value("${10.q.xrbl.td.file.str}")
+	private String xrblTdFileStr;
+
 	@Autowired
 	private DocRetrievalSvc docSvc;
-	
+
 	private AppMsg<String> convertAppMsg(AppMsg<Document> docMsg){
 		AppMsg<String> result = new AppMsg<String>();
 		result.setHasErrors(docMsg.hasErrors());
@@ -29,16 +32,32 @@ public class XrblUrlPlugin implements Plugin<String, String> {
 		result.addThrowables(docMsg.getThrowables());
 		return result;
 	}
-	
+
 	public AppMsg<String> process(AppMsg<String> inputParam) {
 		AppMsg<Document> docMsg =  docSvc.getHtmlDoc(inputParam);
 		if ( docMsg.hasErrors()){
 			return convertAppMsg(docMsg);
 		} else {
 			Document parentDoc = docMsg.getResult();
-			Element xrblTd = parentDoc.select(xrblTdStr).first();
-			Element xrblLink = xrblTd.siblingElements().select(xrblSelector).first();
-			return new AppMsg<String>(xrblLink.attributes().get("href"));
+
+			/*
+			 * at some point the SEC started using, "XBRL DOCUMENT,"
+			 * instead of, "XBRL FILE."
+			 * 
+			 */
+			Element xrblTd = parentDoc.select(xrblTdDocStr).first();
+			if (xrblTd == null) {
+				xrblTd = parentDoc.select(xrblTdFileStr).first();
+			}
+			if (xrblTd != null){
+				Element xrblLink = xrblTd.siblingElements().select(xrblSelector).first();
+				return new AppMsg<String>(xrblLink.attributes().get("href"));
+			} else {
+				AppMsg<String> negResult = new AppMsg<String>();
+				negResult.setHasErrors(true);
+				negResult.setResult("10q parent document does not have links to any XBRL files.");
+				return negResult;
+			}
 		}
 	}
 
