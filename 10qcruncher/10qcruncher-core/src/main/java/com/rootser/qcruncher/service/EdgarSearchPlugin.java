@@ -64,7 +64,10 @@ public class EdgarSearchPlugin implements Plugin<Date, List<String>> {
 			List<String> urlList = new ArrayList<String>();
 			
 			for (Element element: tenQUrls){
-				urlList.add(element.attr("href"));
+				String url = element.attr("href");
+				if (url != null && ! url.equals("null")){
+					urlList.add("https://www.sec.gov" + element.attr("href"));
+				}
 			}
 			
 			urlListMsg.setResult(urlList);
