@@ -1,5 +1,10 @@
 package com.rootser.qcruncher.integration.service;
 
+import static org.junit.Assert.assertTrue;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,7 +46,7 @@ public class IntegrationTest {
 	private XrblToArffSvc xrblSvc;
 
 	@Test
-	public void test() {
+	public void test() throws FileNotFoundException {
 		Calendar cal = Calendar.getInstance();
 		cal.set(Calendar.YEAR, 2012);
 		cal.set(Calendar.DAY_OF_MONTH, 16);
@@ -61,7 +66,13 @@ public class IntegrationTest {
 
 		AppMsg<String> arff = xrblSvc.toArffFormat(dataSet);
 
-		logger.debug(arff.getResult());
+		assertTrue(arff.getResult() != null);
+		
+		PrintWriter pw = new PrintWriter(new File("/tmp/10qdata.arff"));
+		pw.println(arff.getResult());
+		pw.close();
+		
+		
 	}
 
 }
