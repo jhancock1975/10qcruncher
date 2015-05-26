@@ -8,6 +8,8 @@ import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,7 @@ import com.rootser.qcruncher.service.ProcessDelegate;
 @Service
 public class XrblToArffSvcImpl implements XrblToArffSvc {
 
+	Logger logger = LoggerFactory.getLogger(XrblToArffSvcImpl.class);
 
 	public AppMsg<ArffDataSet> convertXrbls(List<AppMsg<String>> xmlDocUrls) {
 		Plugin<String, ArffData>  xrblPlugin = new XrblToArffPlugin();
@@ -26,8 +29,13 @@ public class XrblToArffSvcImpl implements XrblToArffSvc {
 		List<AppMsg<ArffData>> arffDataMsgs = delegate.applyPluginProcessList(xmlDocUrls, xrblPlugin);
 		
 		AppMsg<ArffDataSet> dataSetMsg = new AppMsg<ArffDataSet>();
+		dataSetMsg.setResult(new ArffDataSet());
+		
 		for (AppMsg<ArffData> arffDataMsg: arffDataMsgs){
 			dataSetMsg.copyMsgErrThrows(arffDataMsg);
+			if (arffDataMsg.getResult() != null){
+				dataSetMsg.getResult().add(arffDataMsg.getResult());
+			}
 		}
 		
 		return dataSetMsg;
@@ -76,7 +84,10 @@ public class XrblToArffSvcImpl implements XrblToArffSvc {
 
 		for (ArffData arffData: arffDataList.getResult().getDataSet()){
 			
-
+			if (arffData.getStartDate() == null || arffData.getEndDate() == null){
+				logger.debug("unable to find a date from xbrl data for cik " + arffData.getCik());
+				continue;
+			}
 			result.append(arffData.getCik()+",");
 			result.append(format.format(arffData.getStartDate()) + ",");
 			result.append(format.format(arffData.getEndDate()) + ",");

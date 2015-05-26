@@ -21,6 +21,9 @@ public class XrblUrlPlugin implements Plugin<String, String> {
 
 	@Value("${10.q.xrbl.td.file.str}")
 	private String xrblTdFileStr;
+	
+	@Value("${sec.url.prefix}")
+	private String urlPrefix;
 
 	@Autowired
 	private DocRetrievalSvc docSvc;
@@ -33,6 +36,7 @@ public class XrblUrlPlugin implements Plugin<String, String> {
 		return result;
 	}
 
+	
 	public AppMsg<String> process(AppMsg<String> inputParam) {
 		AppMsg<Document> docMsg =  docSvc.getHtmlDoc(inputParam);
 		if ( docMsg.hasErrors()){
@@ -46,19 +50,27 @@ public class XrblUrlPlugin implements Plugin<String, String> {
 			 * 
 			 */
 			Element xrblTd = parentDoc.select(xrblTdDocStr).first();
+			AppMsg<String> result = null;
 			if (xrblTd == null) {
 				xrblTd = parentDoc.select(xrblTdFileStr).first();
 			}
 			if (xrblTd != null){
 				Element xrblLink = xrblTd.siblingElements().select(xrblSelector).first();
-				return new AppMsg<String>(xrblLink.attributes().get("href"));
+				if (xrblLink != null && xrblLink.attributes() != null && xrblLink.attributes().get("href") != null) {
+					result = new AppMsg<String>(urlPrefix + xrblLink.attributes().get("href"));
+				} else {
+					result = new AppMsg<String>();
+					result.setHasErrors(true);
+					result.addMsg("10q parent document does not have links to XBRL documents.");
+				}
 			} else {
-				AppMsg<String> negResult = new AppMsg<String>();
-				negResult.setHasErrors(true);
-				negResult.setResult("10q parent document does not have links to any XBRL files.");
-				return negResult;
+				result = new AppMsg<String>();
+				result.setHasErrors(true);
+				result.addMsg("10q parent document does not have table elements that contain XBRL documents.");
 			}
+			return result;
 		}
+		
 	}
 
 }

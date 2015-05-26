@@ -3,20 +3,15 @@ package com.rootser.qcruncher.integration.service;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -28,6 +23,7 @@ import com.rootser.qcruncher.common.CommonCatchLogic;
 import com.rootser.qcruncher.integration.common.ArffData;
 import com.rootser.qcruncher.plugin.Plugin;
 @Component
+@Qualifier("XrblUrlPlugin")
 public class XrblToArffPlugin implements Plugin<String, ArffData> {
 
 	private static Logger logger = LoggerFactory.getLogger(XrblToArffPlugin.class);

@@ -24,8 +24,8 @@ import com.rootser.qcruncher.plugin.Plugin;
 
 public class ProcessDelegate<T, S> {
 	Logger logger = LoggerFactory.getLogger(ProcessDelegate.class);
-	
-	
+
+
 	public  AppMsg<T> applyPluginProcess(AppMsg<S> appMsg, Plugin<S, T> plugin){
 		AppMsg<T> processedResult = new AppMsg<T>();
 		if (appMsg == null){
@@ -39,10 +39,10 @@ public class ProcessDelegate<T, S> {
 				processedResult.setHasErrors(true);
 			} else {
 				try {
-					
+
 					processedResult = plugin.process(appMsg);
-					
-					
+
+
 				} catch(IllegalArgumentException e){
 
 					CommonCatchLogic.commonCatchLogic(logger, processedResult, e);
@@ -51,31 +51,40 @@ public class ProcessDelegate<T, S> {
 				}
 			}
 		}
+
+
+		if (processedResult == null){
+			logger.debug("plugin for process delegate of type " + this.getClass()+ "plugin.process returned null  ");
+			processedResult = new AppMsg<T>();
+			processedResult.addMsg("A plugin returned a null app message.");
+			processedResult.setHasErrors(true);
+		}
 		if (processedResult.getResult() == null){
 			processedResult.addMsg("10qcruncher plugin " + plugin.getClass() + " returned null when processing " + appMsg.toString());
 			processedResult.setHasErrors(true);
 		}
+
 		return processedResult;
 	}
 	@SuppressWarnings("unchecked")
 	public List<AppMsg<T>> applyPluginProcessList(List<AppMsg<S>> appMsgs, Plugin<S, T> plugin){
-		
+
 		AppMsg<T> errMsg = new AppMsg<T>();
-		
+
 		if (appMsgs == null){
-			
+
 			logger.debug("AppMsg for applyPluginProcessList (list method) is null");
 			errMsg.addMsg("10qcruncher is trying to process a null list of application messages.");
 			errMsg.setHasErrors(true);
 			return (List<AppMsg<T>>) Lists.newArrayList(errMsg);
-			
+
 		} else {
-			
+
 			List<AppMsg<T>> resultList = new ArrayList<AppMsg<T>>();
 			for (AppMsg<S> url : appMsgs){
 				resultList.add(applyPluginProcess(url, plugin));
 			}
-			
+
 			return(resultList);
 		}
 	}
