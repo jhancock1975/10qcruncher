@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -59,13 +60,13 @@ public class EdgarSearchPlugin implements Plugin<Date, List<String>> {
 			searchUrl = getSearchUrl(date);
 			Document searchResult = Jsoup.connect(searchUrl).get();
 			
-			Elements tenQUrls = searchResult.select("a[href^=/Archives/edgar/data/]");
+			Elements tenQUrls = searchResult.select("a[href^=/Archives/edgar/data/]:contains([html])");
 			
 			List<String> urlList = new ArrayList<String>();
 			
 			for (Element element: tenQUrls){
 				String url = element.attr("href");
-				if (url != null && ! url.equals("null")){
+				if (!StringUtils.isBlank(url) && ! url.equals("null")){
 					urlList.add("https://www.sec.gov" + element.attr("href"));
 				}
 			}

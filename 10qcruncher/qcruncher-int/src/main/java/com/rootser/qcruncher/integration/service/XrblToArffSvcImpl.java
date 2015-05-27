@@ -94,7 +94,7 @@ public class XrblToArffSvcImpl implements XrblToArffSvc {
 			
 			AppMsg<Double> avgSp500Msg = avgSvc.getAvgSp500(getAvgSpDates(arffData.getEndDate()));
 			resultMsg.copyMsgErrThrows(avgSp500Msg);
-			result.append(avgSp500Msg.getResult());
+			result.append(avgSp500Msg.getResult()+",");
 
 			for(String attrib: attributeCounts.keySet()){
 
