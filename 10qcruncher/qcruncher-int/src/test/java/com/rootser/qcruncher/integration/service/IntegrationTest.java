@@ -80,8 +80,6 @@ public class IntegrationTest {
 			}
 		}
 		
-		dumpListToFile(urls, "/tmp/parenturls");
-		
 
 		List<AppMsg<String>> parentUrlMsgs = new ArrayList<AppMsg<String>>();
 		for (String url: parentUrls.getResult()){
@@ -95,12 +93,10 @@ public class IntegrationTest {
 		for (AppMsg<String> curMsg: xrblUrls){
 			if ( ! StringUtils.isBlank(curMsg.getResult()) && ! curMsg.hasErrors()){
 				urls.add(curMsg.getResult());
-			} else {
-				logger.debug("found blank url");
-				fail("found blank url from parent doc parser service");
+			} else if (! curMsg.hasErrors()){
+				fail("found blank url without an error to explain why");
 			}
 		}
-		dumpListToFile(urls, "/tmp/xbrlurls");
 
 		AppMsg<ArffDataSet> dataSet = xrblSvc.convertXrbls(xrblUrls);
 

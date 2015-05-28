@@ -5,12 +5,16 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import com.rootser.qcruncher.common.AppMsg;
 import com.rootser.qcruncher.service.DocRetrievalSvc;
 
 @Component
+@Configuration
+@PropertySource("classpath:parent-parser.properties")
 public class XrblUrlPlugin implements Plugin<String, String> {
 
 	@Value("${10.q.xrbl.selector}")
