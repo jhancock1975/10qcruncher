@@ -1,6 +1,7 @@
 package com.rootser.qcruncher.integration.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -24,6 +25,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.rootser.qcruncher.common.AppMsg;
+import com.rootser.qcruncher.common.DateRange;
 import com.rootser.qcruncher.integration.common.ArffDataSet;
 import com.rootser.qcruncher.service.DocRetrievalSvc;
 import com.rootser.qcruncher.service.EdgarSearchSvc;
@@ -61,14 +63,12 @@ public class IntegrationTest {
 		}
 	}
 
-	@Test
-	public void test() throws FileNotFoundException {
-		Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.YEAR, 2012);
-		cal.set(Calendar.DAY_OF_MONTH, 16);
-		cal.set(Calendar.MONTH, 4);
-
-		AppMsg<List<String>> parentUrls = searchSvc.get10QForDate(new AppMsg<Date>(cal.getTime()));
+	
+	public void getArffs(Date startDate, Date endDate) throws FileNotFoundException {
+		
+		AppMsg<List<String>> parentUrls = searchSvc.get10QForDateRange(new AppMsg<DateRange>(
+				new DateRange(startDate, endDate)));
+		
 		List<String> urls = new ArrayList<String>();
 		
 		for (String curMsg: parentUrls.getResult()){
@@ -109,6 +109,32 @@ public class IntegrationTest {
 		pw.close();
 		
 		
+	}
+	
+	@Test
+	public void getOneDay() throws FileNotFoundException{
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.YEAR, 2012);
+		cal.set(Calendar.DAY_OF_MONTH, 16);
+		cal.set(Calendar.MONTH, 4);
+		
+		getArffs(cal.getTime(), cal.getTime());
+
+	}
+	
+	@Test
+	public void getMultiDay() throws FileNotFoundException {
+		Calendar startCal = Calendar.getInstance();
+		startCal.set(Calendar.YEAR, 2012);
+		startCal.set(Calendar.DAY_OF_MONTH, 16);
+		startCal.set(Calendar.MONTH, 4);
+		
+		Calendar endCal = Calendar.getInstance();
+		endCal.set(Calendar.YEAR, 2012);
+		endCal.set(Calendar.DAY_OF_MONTH, 23);
+		endCal.set(Calendar.MONTH, 4);
+		
+		getArffs(startCal.getTime(), endCal.getTime());
 	}
 
 }

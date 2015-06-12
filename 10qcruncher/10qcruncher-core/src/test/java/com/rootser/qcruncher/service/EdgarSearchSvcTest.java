@@ -1,9 +1,8 @@
 package com.rootser.qcruncher.service;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -16,6 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.rootser.qcruncher.common.AppMsg;
+import com.rootser.qcruncher.common.DateRange;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = { "classpath:XmlReaderConfig.xml" })
 @Configuration
@@ -32,7 +32,9 @@ public class EdgarSearchSvcTest {
 		cal.set(Calendar.MONTH, 2);
 		cal.set(Calendar.DAY_OF_MONTH, 3);
 		
-		List<String> urlList = searchSvc.get10QForDate(new AppMsg<Date>(cal.getTime())).getResult();
+		DateRange range = new DateRange(cal.getTime(), cal.getTime());
+		
+		List<String> urlList = searchSvc.get10QForDateRange(new AppMsg<DateRange>(range)).getResult();
 		
 		assertTrue("EdgarSearchSvc.get10QForDate returned an empty list for " + cal.toString(), CollectionUtils.isNotEmpty(urlList));
 	}

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.google.common.collect.Lists;
 import com.rootser.qcruncher.common.AppMsg;
+import com.rootser.qcruncher.common.DateRange;
 import com.rootser.qcruncher.plugin.Plugin;
 
 @Service
@@ -16,9 +17,12 @@ public class EdgarSearchSvcImpl implements EdgarSearchSvc {
 	
 	@Autowired 
 	@Qualifier("EdgarSearchPlugin")
-	private Plugin<Date, List<String>> edgarSearchPlugin;
-	public AppMsg<List<String>> get10QForDate(AppMsg<Date> dateMsg) {
-		return new ProcessDelegate<List<String>, Date>( ).applyPluginProcess(dateMsg, edgarSearchPlugin);
+	private Plugin<DateRange, List<String>> edgarSearchPlugin;
+	
+	
+	public AppMsg<List<String>> get10QForDateRange(AppMsg<DateRange> dateRangeMsg) {
+	
+		return new ProcessDelegate<List<String>, DateRange>().applyPluginProcess(dateRangeMsg, edgarSearchPlugin);
 	}
 
 }

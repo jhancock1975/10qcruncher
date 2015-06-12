@@ -21,43 +21,70 @@ import org.springframework.stereotype.Component;
 
 import com.rootser.qcruncher.common.AppMsg;
 import com.rootser.qcruncher.common.CommonCatchLogic;
+import com.rootser.qcruncher.common.DateRange;
 import com.rootser.qcruncher.plugin.Plugin;
 
 @Component
 @Qualifier("EdgarSearchPlugin")
-public class EdgarSearchPlugin implements Plugin<Date, List<String>> {
+public class EdgarSearchPlugin implements Plugin<DateRange, List<String>> {
 	
 	Logger logger = LoggerFactory.getLogger(EdgarSearchPlugin.class);
 	
-	private String getSearchUrl(Date date) throws UnsupportedEncodingException{
+	public static final long MILIS_IN_DAY = 1000 * 60 * 60 * 24;
+	
+	private StringBuilder getDateRangeString(Date startDate, Date endDate, StringBuilder result) throws UnsupportedEncodingException{
+		
 		SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyyMMdd");
-		StringBuilder result = new StringBuilder("https://www.sec.gov/cgi-bin/srch-edgar?text=filing-date");
-		result.append(URLEncoder.encode("=" + dateFormatter.format(date), "UTF-8"));
+		
+		Date curDate = startDate;
+		while (curDate.compareTo(endDate) < 0){
+			result.append("filing-date");
+			result.append(URLEncoder.encode("=" + dateFormatter.format(curDate), "UTF-8"));
+			result.append("+OR+");
+			curDate.setTime(curDate.getTime() + MILIS_IN_DAY);
+		}
+		
+		//strip off last "+OR+"
+		result.setLength(result.length() - 4);
+		
+		return result;
+	}
+	
+	private String getSearchUrl(Date startDate, Date endDate) throws UnsupportedEncodingException{
+		
+		StringBuilder result = new StringBuilder("https://www.sec.gov/cgi-bin/srch-edgar?text=");
+		
+		result = getDateRangeString(startDate, endDate, result);
+		
 		result.append("+AND+type");
 		result.append(URLEncoder.encode("=", "UTF-8"));
 		result.append("10-q");
-		result.append("&first=");
 		
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(date);
+		
+		result.append("&first=");
+		cal.setTime(startDate);
 		result.append(cal.get(Calendar.YEAR));
 		
 		result.append("&last=");
+		cal.setTime(endDate);
 		result.append(cal.get(Calendar.YEAR));
 		
 		return result.toString();
 		
 	}
-	public AppMsg<List<String>> process(AppMsg<Date> dateMsg) {
+	public AppMsg<List<String>> process(AppMsg<DateRange> dateMsg) {
 		
-		Date date = dateMsg.getResult();
+		Date startDate = dateMsg.getResult().getStartDate();
+		
+		Date endDate = dateMsg.getResult().getEndDate();
 		
 		AppMsg<List<String>> urlListMsg = new AppMsg<List<String>>();
 		
 		String searchUrl = null;
 		
 		try{
-			searchUrl = getSearchUrl(date);
+			searchUrl = getSearchUrl(startDate, endDate);
 			Document searchResult = Jsoup.connect(searchUrl).get();
 			
 			Elements tenQUrls = searchResult.select("a[href^=/Archives/edgar/data/]:contains([html])");
