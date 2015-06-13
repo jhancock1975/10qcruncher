@@ -69,7 +69,7 @@ public class XrblToArffSvcImpl implements XrblToArffSvc {
 		result.append("@ATTRIBUTE cik string\n");
 		result.append("@ATTRIBUTE minDate date\n");
 		result.append("@ATTRIBUTE maxDate date\n");
-		//result.append("@ATTRIBUTE avgSp numeric\n");
+		result.append("@ATTRIBUTE avgSp numeric\n");
 
 		for (String attrib: attributeCounts.keySet()){
 			int max = attributeCounts.get(attrib);
@@ -92,9 +92,9 @@ public class XrblToArffSvcImpl implements XrblToArffSvc {
 			result.append(format.format(arffData.getStartDate()) + ",");
 			result.append(format.format(arffData.getEndDate()) + ",");
 			
-			/*AppMsg<Double> avgSp500Msg = avgSvc.getAvgSp500(getAvgSpDates(arffData.getEndDate()));
+			AppMsg<Double> avgSp500Msg = avgSvc.getAvgSp500(getAvgSpDates(arffData.getEndDate()));
 			resultMsg.copyMsgErrThrows(avgSp500Msg);
-			result.append(avgSp500Msg.getResult()+",");*/
+			result.append(avgSp500Msg.getResult()+",");
 
 			for(String attrib: attributeCounts.keySet()){
 
