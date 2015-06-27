@@ -17,6 +17,7 @@ public class HtmlDownloadPlugin implements Plugin<String, Document>{
 	@SuppressWarnings("unchecked")
 	public AppMsg<Document> process(AppMsg<String> urlStr) {
 		try {
+			logger.debug("attempting download of " + urlStr.getResult());
 			return new AppMsg<Document>(Jsoup.connect(urlStr.getResult()).get());
 		} catch (IOException e) {
 			return (AppMsg<Document>) CommonCatchLogic.commonCatchLogic(logger, new AppMsg<Document>(), e, 
