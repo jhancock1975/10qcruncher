@@ -15,7 +15,7 @@ import com.rootser.qcruncher.service.DocRetrievalSvc;
 @Component
 @Configuration
 @PropertySource("classpath:parent-parser.properties")
-public class XrblUrlPlugin implements Plugin<String, String> {
+public class XbrlUrlPlugin implements Plugin<String, String> {
 
 	@Value("${10.q.xrbl.selector}")
 	private String xrblSelector;

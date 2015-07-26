@@ -6,7 +6,7 @@ import com.rootser.qcruncher.common.AppMsg;
 import com.rootser.qcruncher.integration.common.ArffData;
 import com.rootser.qcruncher.integration.common.ArffDataSet;
 
-public interface XrblToArffSvc {
+public interface XbrlToArffSvc {
 	
 	public AppMsg<ArffDataSet> convertXrbls(List<AppMsg<String>> xmlDocs);
 	

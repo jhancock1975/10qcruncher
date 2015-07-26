@@ -14,7 +14,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 
 import com.rootser.qcruncher.common.AppMsg;
-import com.rootser.qcruncher.plugin.XrblUrlPlugin;
+import com.rootser.qcruncher.plugin.XbrlUrlPlugin;
 @Service
 @Configuration
 @PropertySource("classpath:parent-parser.properties")
@@ -35,7 +35,7 @@ public class ParentDocParserServiceImpl implements ParentDocParserService {
 	private DocRetrievalSvc docSvc;
 	
 	@Autowired
-	private XrblUrlPlugin xrblPlugin;
+	private XbrlUrlPlugin xrblPlugin;
 
 	public List<AppMsg<String>> get10QHtmUrl(List<AppMsg<String>> parentDocList) {
 		return get10QUrlList(parentDocList, htmlSelector);

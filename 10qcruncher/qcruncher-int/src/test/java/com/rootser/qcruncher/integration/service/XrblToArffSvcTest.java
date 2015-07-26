@@ -28,7 +28,7 @@ public class XrblToArffSvcTest {
 	Logger logger = LoggerFactory.getLogger(XrblToArffSvcTest.class);
 
 	@Autowired
-	private XrblToArffSvc xrblToArffSvc;
+	private XbrlToArffSvc xrblToArffSvc;
 
 	@Autowired
 	private Environment env;

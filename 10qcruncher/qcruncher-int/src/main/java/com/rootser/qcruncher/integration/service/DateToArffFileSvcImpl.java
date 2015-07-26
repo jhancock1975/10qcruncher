@@ -33,7 +33,7 @@ public class DateToArffFileSvcImpl implements DateToArffFileSvc {
 	private DocRetrievalSvc docRetSvc;
 
 	@Autowired 
-	private XrblToArffSvc xrblSvc;
+	private XbrlToArffSvc xbrlSvc;
 
 
 	private AppMsg<String> getArffs(Date startDate, Date endDate){
@@ -48,7 +48,6 @@ public class DateToArffFileSvcImpl implements DateToArffFileSvc {
 				urls.add(curMsg);
 			} else {
 				logger.debug("found blank url");
-				fail("found blank url from edgar search service");
 			}
 		}
 
@@ -70,9 +69,9 @@ public class DateToArffFileSvcImpl implements DateToArffFileSvc {
 			}
 		}
 
-		AppMsg<ArffDataSet> dataSet = xrblSvc.convertXrbls(xrblUrls);
+		AppMsg<ArffDataSet> dataSet = xbrlSvc.convertXrbls(xrblUrls);
 
-		return xrblSvc.toArffFormat(dataSet);
+		return xbrlSvc.toArffFormat(dataSet);
 	}
 
 	public AppMsg<String> getArffForDay(Date date) {

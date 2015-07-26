@@ -19,7 +19,7 @@ import com.rootser.qcruncher.integration.common.ArffDataSet;
 import com.rootser.qcruncher.plugin.Plugin;
 import com.rootser.qcruncher.service.ProcessDelegate;
 @Service
-public class XrblToArffSvcImpl implements XrblToArffSvc {
+public class XrblToArffSvcImpl implements XbrlToArffSvc {
 
 	Logger logger = LoggerFactory.getLogger(XrblToArffSvcImpl.class);
 

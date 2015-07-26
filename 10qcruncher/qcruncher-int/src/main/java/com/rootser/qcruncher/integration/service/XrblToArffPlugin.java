@@ -115,10 +115,22 @@ public class XrblToArffPlugin implements Plugin<String, ArffData> {
 
 							String contextRef = "";
 
-							if (childNode.getAttributes() != null && childNode.getAttributes().getNamedItem("contextRef") != null){
+							if (childNode.getAttributes() != null ){
+								if ( childNode.getAttributes().getNamedItem("contextRef") != null){
+							
 								contextRef = childNode.getAttributes().getNamedItem("contextRef").getNodeValue();
+								}
+								
+								double decimals = 0;
+								if ( childNode.getAttributes().getNamedItem("decimals") != null){
+									decimals = Double.parseDouble(childNode.getAttributes().getNamedItem("decimals").getNodeValue());
+								}
+								
+								nodeVal = nodeVal * Math.pow(10.0, decimals);
 
 							}
+							
+							
 
 							arffData.addData(nodeName, new ImmutablePair<String, Double>(contextRef, nodeVal));
 
