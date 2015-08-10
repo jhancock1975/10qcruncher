@@ -59,7 +59,7 @@
 						</section>
 						<section>
 						 <div align="center">
-						        <br> <br> ${message} <br> <br>
+						        
 						        <div id="result"></div>
 						        <br>
 						        <p>
